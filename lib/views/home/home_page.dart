@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mvvm_project/views/api_images/api_images_page.dart';
+import 'package:mvvm_project/views/flutter_overview_page.dart';
 import 'package:mvvm_project/views/home/home_header.dart';
 import 'package:mvvm_project/views/home/home_menu_button.dart';
 import 'package:mvvm_project/views/login_page.dart';
@@ -90,6 +91,13 @@ class HomePage extends StatelessWidget {
                       icon: Icons.flutter_dash,
                       label: 'Tổng quan Flutter',
                       iconColor: const Color(0xFF54C5F8),
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => const FlutterOverviewPage(),
+                          ),
+                        );
+                      },
                     ),
                     HomeMenuButton(
                       icon: Icons.power_settings_new,
