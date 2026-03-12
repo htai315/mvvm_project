@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class FlutterTopic {
   final IconData icon;
@@ -32,50 +33,57 @@ class FlutterTopicDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const pageBackground = Color(0xFFE9F4FF);
-    const headerBlue = Color(0xFF1D4E9E);
-    const accentBlue = Color(0xFF2C86C8);
+    const pageBackground = Color(0xFFF0F4F8);
+    const primaryBlue = Color(0xFF1A56BE);
+    const secondaryBlue = Color(0xFF4285F4);
 
     return Scaffold(
       backgroundColor: pageBackground,
       appBar: AppBar(
-        backgroundColor: headerBlue,
-        foregroundColor: Colors.white,
         elevation: 0,
-        title: Text(topic.title),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [primaryBlue, secondaryBlue],
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+            ),
+          ),
+        ),
+        title: Text(
+          topic.title,
+          style: const TextStyle(fontWeight: FontWeight.bold, letterSpacing: 0.5),
+        ),
+        centerTitle: true,
       ),
       body: ListView(
-        padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
         children: [
+          // Header Card
           Container(
-            padding: const EdgeInsets.all(18),
+            padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(18),
+              borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.06),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
+                  color: Colors.blue.withOpacity(0.1),
+                  blurRadius: 20,
+                  offset: const Offset(0, 10),
                 ),
               ],
             ),
             child: Row(
               children: [
                 Container(
-                  width: 54,
-                  height: 54,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFFE7F1FB),
-                    shape: BoxShape.circle,
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: secondaryBlue.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(15),
                   ),
-                  child: Icon(
-                    topic.icon,
-                    color: accentBlue,
-                    size: 28,
-                  ),
+                  child: Icon(topic.icon, color: secondaryBlue, size: 32),
                 ),
-                const SizedBox(width: 14),
+                const SizedBox(width: 16),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -83,18 +91,18 @@ class FlutterTopicDetailPage extends StatelessWidget {
                       Text(
                         topic.title,
                         style: const TextStyle(
-                          fontSize: 20,
+                          fontSize: 22,
                           fontWeight: FontWeight.w800,
-                          color: accentBlue,
+                          color: Color(0xFF1A202C),
                         ),
                       ),
-                      const SizedBox(height: 3),
+                      const SizedBox(height: 4),
                       Text(
                         topic.subtitle,
-                        style: const TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xFF6A6E74),
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.grey[600],
                         ),
                       ),
                     ],
@@ -103,63 +111,97 @@ class FlutterTopicDetailPage extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 20),
+
+          // Sections
           _SectionCard(
             title: 'Tổng quan',
+            icon: Icons.info_outline,
             child: Text(
               topic.overview,
               style: const TextStyle(
                 fontSize: 15,
-                height: 1.45,
-                color: Color(0xFF202226),
+                height: 1.6,
+                color: Color(0xFF2D3748),
               ),
             ),
           ),
-          const SizedBox(height: 12),
+
           _SectionCard(
             title: 'Điểm chính cần nhớ',
-            child: _BulletList(items: topic.essentials),
+            icon: Icons.lightbulb_outline,
+            child: _BulletList(items: topic.essentials, iconColor: Colors.orange),
           ),
-          const SizedBox(height: 12),
+
           _SectionCard(
-            title: 'Áp dụng vào dự án của bạn',
-            child: _BulletList(items: topic.practiceSteps),
+            title: 'Áp dụng thực tế',
+            icon: Icons.construction_outlined,
+            child: _BulletList(items: topic.practiceSteps, iconColor: Colors.green),
           ),
-          if (topic.codeSample.trim().isNotEmpty) ...[
-            const SizedBox(height: 12),
+
+          if (topic.codeSample.trim().isNotEmpty)
             _SectionCard(
-              title: 'Ví dụ nhanh',
-              child: Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF1E1F24),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: SelectableText(
-                  topic.codeSample,
-                  style: const TextStyle(
-                    fontFamily: 'monospace',
-                    fontSize: 13,
-                    height: 1.4,
-                    color: Color(0xFFF3F4F6),
+              title: 'Ví dụ minh họa',
+              icon: Icons.code,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    decoration: const BoxDecoration(
+                      color: Color(0xFF2D3748),
+                      borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+                    ),
+                    child: const Row(
+                      children: [
+                        Icon(Icons.circle, color: Colors.red, size: 10),
+                        SizedBox(width: 6),
+                        Icon(Icons.circle, color: Colors.orange, size: 10),
+                        SizedBox(width: 6),
+                        Icon(Icons.circle, color: Colors.green, size: 10),
+                        Spacer(),
+                        Text(
+                          'dart',
+                          style: TextStyle(color: Colors.white54, fontSize: 12),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(16),
+                    decoration: const BoxDecoration(
+                      color: Color(0xFF1A202C),
+                      borderRadius: BorderRadius.vertical(bottom: Radius.circular(12)),
+                    ),
+                    child: SelectableText(
+                      topic.codeSample,
+                      style: const TextStyle(
+                        fontFamily: 'monospace',
+                        fontSize: 13,
+                        height: 1.5,
+                        color: Color(0xFFE2E8F0),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-          ],
-          const SizedBox(height: 12),
+
           _SectionCard(
-            title: 'Học tiếp',
+            title: 'Lộ trình tiếp theo',
+            icon: Icons.trending_up,
             child: Text(
               topic.learnNext,
               style: const TextStyle(
                 fontSize: 15,
-                height: 1.45,
-                color: Color(0xFF202226),
+                height: 1.6,
+                color: Color(0xFF2D3748),
               ),
             ),
           ),
+          const SizedBox(height: 20),
         ],
       ),
     );
@@ -168,40 +210,54 @@ class FlutterTopicDetailPage extends StatelessWidget {
 
 class _SectionCard extends StatelessWidget {
   final String title;
+  final IconData icon;
   final Widget child;
 
   const _SectionCard({
     required this.title,
+    required this.icon,
     required this.child,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.grey.withOpacity(0.1)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 3),
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w800,
-              color: Color(0xFF1D4E9E),
-            ),
+          Row(
+            children: [
+              Icon(icon, size: 20, color: const Color(0xFF1A56BE)),
+              const SizedBox(width: 8),
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 17,
+                  fontWeight: FontWeight.w800,
+                  color: Color(0xFF1A56BE),
+                  letterSpacing: -0.3,
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 10),
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: 12),
+            child: Divider(height: 1),
+          ),
           child,
         ],
       ),
@@ -211,8 +267,9 @@ class _SectionCard extends StatelessWidget {
 
 class _BulletList extends StatelessWidget {
   final List<String> items;
+  final Color iconColor;
 
-  const _BulletList({required this.items});
+  const _BulletList({required this.items, this.iconColor = Colors.blue});
 
   @override
   Widget build(BuildContext context) {
@@ -220,33 +277,33 @@ class _BulletList extends StatelessWidget {
       children: items
           .map(
             (item) => Padding(
-              padding: const EdgeInsets.only(bottom: 8),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Padding(
-                    padding: EdgeInsets.only(top: 6),
-                    child: Icon(
-                      Icons.circle,
-                      size: 7,
-                      color: Color(0xFF2C86C8),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      item,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        height: 1.4,
-                        color: Color(0xFF202226),
-                      ),
-                    ),
-                  ),
-                ],
+          padding: const EdgeInsets.only(bottom: 12),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 4),
+                child: Icon(
+                  Icons.check_circle,
+                  size: 16,
+                  color: iconColor.withOpacity(0.8),
+                ),
               ),
-            ),
-          )
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  item,
+                  style: const TextStyle(
+                    fontSize: 14.5,
+                    height: 1.5,
+                    color: Color(0xFF4A5568),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      )
           .toList(),
     );
   }
